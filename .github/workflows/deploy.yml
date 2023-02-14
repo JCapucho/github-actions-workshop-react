@@ -1,19 +1,62 @@
 name: Build and deploy
+# Events
 on:
+  # Push to master
   push:
     branches: 
       - 'master'
+  # Manual trigger
+  workflow_dispatch:
+
+# O workflow têm um acesso restrito ao github por defeito
+# mas podemos alterá-las no objeto permissions.
+permissions:
+  # `contents` controla o acesso ao repositório e aos seus ficheiros
+  # neste caso só queremos ler o código fonte para fazer build do site.
+  contents: read
+  # `pages` controla o acesso as github pages, como nós queremos
+  # mudar a página precisamos de ter write access.
+  pages: write
+  # Adicionalmente a deploy-pages actions precisa de acesso ao id-token
+  # para verificar que o deployment vêm de um sítio autorizado.
+  id-token: write
+
+# O objeto `concurrency` previne que duas execuções do mesmo workflow
+# corram ao mesmo tempo de pertencerem ao mesmo grupo.
+# Isto é necessário pois não queremos dois workflows a subsituirem ficheiros
+# do site ao mesmo tempo.
+concurrency:
+  group: "pages"
+  # Queremos cancelar workflows anteriores que já estejam a correr pois o que
+  # nos interessa é sempre a versão mais recente do site.
+  cancel-in-progress: true
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: ubuntu-latest # Tipo de VM
     steps:
       - name: Checkout repository files
         uses: actions/checkout@v3
+      # Aqui instalamos o node
       - name: Setup node 18
         uses: actions/setup-node@v3
         with:
+          # Este input é opcional, mas nesse caso a versão não é definida
+          # outra opção é passar `latest` para ter a versão mais recente
           node-version: 18
+      # Aqui instalamos as dependências do nosso projeto.
+      # Utilizamos `npm ci` que é uma versão própria do `npm install` nativa ao npm,
+      # esta usa sempre o package-lock e não atualiza nada indevidamente.
       - name: Install project dependencies
         run: npm ci
       - name: Build project
         run: npm run build
+      # Para atualizar o site primeiro precisamos de fazer upload da build primeiro.
+      - name: Upload build artifacts
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Diretório com o resultado da build
+          path: dist
+      # Finalmente mandamos fazer deploy da build com a build que fizemos upload.
+      - name: Deploy to Github pages
+        uses: actions/deploy-pages@v1
