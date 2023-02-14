@@ -1,0 +1,19 @@
+name: Build and deploy
+on:
+  push:
+    branches: 
+      - 'master'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v3
+      - name: Setup node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install project dependencies
+        run: npm ci
+      - name: Build project
+        run: npm run build
