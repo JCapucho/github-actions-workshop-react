@@ -42,7 +42,7 @@ jobs:
         run: npm ci
       - name: Build project
         run: npm run build
-      # Para atualizar o site primeiro precisamos de fazer upload da build primeiro.
+      # Para atualizar o site precisamos de fazer upload da build primeiro.
       - name: Upload build artifacts
         uses: actions/upload-pages-artifact@v1
         with:

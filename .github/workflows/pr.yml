@@ -1,0 +1,22 @@
+name: PR Checks 
+# Events
+on:
+  # Push to master
+  push:
+  # On pull request
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest # Tipo de VM
+    steps:
+      - name: Checkout repository files
+        uses: actions/checkout@v3
+      - name: Set up node 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install project dependencies
+        run: npm ci
+      - name: Build project
+        run: npm run build
