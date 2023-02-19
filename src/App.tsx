@@ -11,6 +11,7 @@ function App() {
       </div>
       <h1>Github actions workshop</h1>
       <p className="desc">Build and deploy a react app</p>
+      <p className="desc">Adding this in a PR</p>
     </div>
   )
 }
