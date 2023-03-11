@@ -2,6 +2,7 @@ import gluaLogoUrl from "/glua-logo.svg"
 import './App.css'
 
 function App() {
+  const a: number = "1";
   return (
     <div className="App">
       <div>
