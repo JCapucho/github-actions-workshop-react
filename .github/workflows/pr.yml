@@ -3,6 +3,8 @@ name: PR Checks
 on:
   # Push to master
   push:
+    branches: 
+      - 'master'
   # On pull request
   pull_request:
 
@@ -18,5 +20,5 @@ jobs:
           node-version: 18
       - name: Install project dependencies
         run: npm ci
-      - name: Build project
-        run: npm run build
+      - name: Run project checks
+        run: npm run check
